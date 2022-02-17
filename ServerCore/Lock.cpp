@@ -1,9 +1,13 @@
 #include "pch.h"
 #include "Lock.h"
+#include "DeadLockProfiler.h"
 
 //다른 스레드의 writelcok은 막고, 같은 스레드의 writelock은 허용
-void Lock::WriteLock()
+void Lock::WriteLock(const char* name)
 {
+#if _DEBUG
+	GDeadLockProfiler->PushLock(name);
+#endif
 	//같은 스레드일 경우 wirtecount 증가
 	const uint32 threadId = _lockFlag.load() & WRITE_THREAD_MASK >> 16;
 	if (LThreadId == threadId)
@@ -37,8 +41,11 @@ void Lock::WriteLock()
 	}
 }
 
-void Lock::WriteUnlock()
+void Lock::WriteUnlock(const char* name)
 {
+#if _DEBUG
+	GDeadLockProfiler->PopLock(name);
+#endif
 	//readLock이 다 풀려야 writeunlock 가능.
 	if ((_lockFlag.load() & READ_COUNT_MASK) != 0)
 	{
@@ -51,9 +58,12 @@ void Lock::WriteUnlock()
 	}
 }
 //읽을 떄 자신 말고는 아무도 wrieteLock 중이지 않아야 함. 
-void Lock::ReadLock()
+void Lock::ReadLock(const char* name)
 {
-	//같은 스레드일 경우 readcount 증가
+#if _DEBUG
+	GDeadLockProfiler->PushLock(name);
+#endif
+	//같은 스레드가 쓰기 중일 경우 readcount 증가
 	const uint32 threadId = _lockFlag.load() & WRITE_THREAD_MASK >> 16;
 	if (LThreadId == threadId)
 	{
@@ -66,6 +76,7 @@ void Lock::ReadLock()
 	{
 		for (uint32 spinCount = 0; spinCount < MAX_SPIN_COUNT; spinCount++)
 		{
+			//쓰고있는 스레드가 없을 때 
 			uint32 expected = _lockFlag & READ_COUNT_MASK;
 			if (_lockFlag.compare_exchange_strong(OUT expected, expected + 1))
 			{
@@ -81,8 +92,11 @@ void Lock::ReadLock()
 	}
 }
 
-void Lock::ReadUnlock()
+void Lock::ReadUnlock(const char* name)
 {
+#if _DEBUG
+	GDeadLockProfiler->PopLock(name);
+#endif
 	if ((_lockFlag.fetch_sub(1) & READ_COUNT_MASK) == 0)//fetch_sub는 계산 이전 값을 반환하기 때문에 0이면 이상함
 	{
 		CRASH("MULTIPLE_UNLOCK");
