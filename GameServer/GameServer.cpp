@@ -14,14 +14,11 @@ public :
 	int32 TestRead()
 	{
 		READ_LOCK;
-		if (_que.empty() == false)
-		{
-			return _que.front();
-		}
-		else
+		if (_que.empty() )
 		{
 			return -1;
 		}
+		return _que.front();
 	}
 	void TestPush()
 	{
@@ -41,12 +38,15 @@ private:
 };
 
 TestLock testLock;
+
+
 void ThreadWrite()
 {
 	while (true)
 	{
 		testLock.TestPush();
 		this_thread::sleep_for(1ms);
+		testLock.TestPop();
 	}
 }
 void ThreadRead()
@@ -60,11 +60,11 @@ void ThreadRead()
 }
 int main()
 {
-	for (int32 i = 0; i < 2; i++)
+	for (int32 i = 0; i < 1; i++)
 	{
 		GThreadManager->Launch(ThreadWrite);
 	}
-	for (int32 i = 0; i < 5; i++)
+	for (int32 i = 0; i < 3; i++)
 	{
 		GThreadManager->Launch(ThreadRead);
 	}

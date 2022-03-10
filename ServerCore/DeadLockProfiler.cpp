@@ -11,7 +11,7 @@ void DeadLockProfiler::PushLock(const char* name)
 	auto foundIt = _nameToId.find(name);
 	if (foundIt == _nameToId.end())
 	{
-		lockId = _nameToId.size();
+		lockId = static_cast<int>(_nameToId.size());
 		_nameToId[name] = lockId;
 		_idToName[lockId] = name;
 	}
@@ -47,11 +47,17 @@ void DeadLockProfiler::PopLock(const char* name)
 {
 	LockGuard guard(_lock);
 	if (_lockStack.empty())
+	{
 		CRASH("MULTIPLE_UNLOCK");
+	}
+
 
 	int32 lockId = _nameToId[name];
 	if (_lockStack.top() != lockId)
+	{
 		CRASH("INVALID_UNLOCK");
+	}
+
 
 	_lockStack.pop();
 }
@@ -60,7 +66,7 @@ void DeadLockProfiler::CheckCycle()
 {
 	const int32 lockCount = static_cast<int32>(_nameToId.size());
 	_discoveredOrder = vector<int32>(lockCount, -1);
-	_discoverdCount = 0;
+	_discoveredCount = 0;
 	_finished = vector<bool>(lockCount, false);
 	_parent = vector<int32>(lockCount, -1);
 	for (int32 lockId = 0; lockId < lockCount; lockId++)
@@ -79,7 +85,7 @@ void DeadLockProfiler::DFS(int32 here)
 		return;
 
 	//순서 기록
-	_discoveredOrder[here] = _discoverdCount++;
+	_discoveredOrder[here] = _discoveredCount++;
 
 	//정점 순회 시작
 	//연결된 노드가 없으면 finish

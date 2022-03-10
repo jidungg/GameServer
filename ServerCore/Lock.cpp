@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Lock.h"
+#include "CoreTLS.h"
 #include "DeadLockProfiler.h"
 
 //다른 스레드의 writelcok은 막고, 같은 스레드의 writelock은 허용
@@ -9,7 +10,7 @@ void Lock::WriteLock(const char* name)
 	GDeadLockProfiler->PushLock(name);
 #endif
 	//같은 스레드일 경우 wirtecount 증가
-	const uint32 threadId = _lockFlag.load() & WRITE_THREAD_MASK >> 16;
+	const uint32 threadId = (_lockFlag.load() & WRITE_THREAD_MASK) >> 16;
 	if (LThreadId == threadId)
 	{
 		++_writeCount;
@@ -49,6 +50,7 @@ void Lock::WriteUnlock(const char* name)
 	//readLock이 다 풀려야 writeunlock 가능.
 	if ((_lockFlag.load() & READ_COUNT_MASK) != 0)
 	{
+		std::cout << _lockFlag.load()<< " "<< _lockFlag;
 		CRASH("INVALID_UNLOCK_ORDER");
 	}
 	const int32 lockCount = --_writeCount;
@@ -64,7 +66,7 @@ void Lock::ReadLock(const char* name)
 	GDeadLockProfiler->PushLock(name);
 #endif
 	//같은 스레드가 쓰기 중일 경우 readcount 증가
-	const uint32 threadId = _lockFlag.load() & WRITE_THREAD_MASK >> 16;
+	const uint32 threadId = (_lockFlag.load() & WRITE_THREAD_MASK) >> 16;
 	if (LThreadId == threadId)
 	{
 		_lockFlag.fetch_add(1);
@@ -77,7 +79,7 @@ void Lock::ReadLock(const char* name)
 		for (uint32 spinCount = 0; spinCount < MAX_SPIN_COUNT; spinCount++)
 		{
 			//쓰고있는 스레드가 없을 때 
-			uint32 expected = _lockFlag & READ_COUNT_MASK;
+			uint32 expected = (_lockFlag.load() & READ_COUNT_MASK);
 			if (_lockFlag.compare_exchange_strong(OUT expected, expected + 1))
 			{
 				return;
