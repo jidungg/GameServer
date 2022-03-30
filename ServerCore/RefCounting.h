@@ -1,10 +1,11 @@
 #pragma once
+#include "pch.h"
 //상속해서 사용
 class RefCountable
 {
 public :
-	RefCountable() : _refCount(1) {}
-	virtual ~RefCountable() {}
+	RefCountable() : _refCount(1) { ; }
+	virtual ~RefCountable() { ; }
 	int32 GetRefCount() { return _refCount; }
 	int32 AddRef() { return ++_refCount; }
 	int32 ReleaseRef()
@@ -26,7 +27,9 @@ class TSharedPtr
 public :
 	TSharedPtr(){}
 	TSharedPtr(T* ptr) { Set(ptr); }
+	//복사 생성자
 	TSharedPtr(const TSharedPtr& rhs) { Set(rhs._ptr); }
+	//이동 
 	TSharedPtr(TSharedPtr&& rhs) { _ptr = rhs._ptr; rhs._ptr = nullptr; } // 왜 Release 안함?
 	template<typename U>
 	TSharedPtr(const TSharedPtr<U>& rhs) { Set(static_cast<T*>(rhs._ptr)); }
@@ -43,7 +46,7 @@ public:
 		}
 		return *this;
 	}
-	TSharedPtr& operator=(const TSharedPtr&& rhs)
+	TSharedPtr& operator=(TSharedPtr&& rhs)
 	{
 		Release();
 		_ptr = rhs._ptr;

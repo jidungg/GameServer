@@ -7,67 +7,22 @@
 #include <future>
 #include "ThreadManager.h"
 
-class TestLock
+#include "Memory.h"
+
+class Knight
 {
-	USE_LOCK;
-public :
-	int32 TestRead()
-	{
-		READ_LOCK;
-		if (_que.empty() )
-		{
-			return -1;
-		}
-		return _que.front();
-	}
-	void TestPush()
-	{
-		WRITE_LOCK;
-		_que.push(1);
-	}
-	void TestPop()
-	{
-		WRITE_LOCK;
-		if (_que.empty() == false)
-		{
-			_que.pop();
-		}
-	}
-private:
-	queue<int32> _que;
+public:
+	Knight() {  }
+	Knight(int hp) :_hp(hp){}
+	int _hp;
 };
-
-TestLock testLock;
-
-
-void ThreadWrite()
-{
-	while (true)
-	{
-		testLock.TestPush();
-		this_thread::sleep_for(1ms);
-		testLock.TestPop();
-	}
-}
-void ThreadRead()
-{
-	while (true)
-	{
-		int32 value = testLock.TestRead();
-		cout << value<< endl;
-		this_thread::sleep_for(1ms);
-	}
-}
 int main()
 {
-	for (int32 i = 0; i < 1; i++)
-	{
-		GThreadManager->Launch(ThreadWrite);
-	}
-	for (int32 i = 0; i < 3; i++)
-	{
-		GThreadManager->Launch(ThreadRead);
-	}
-	GThreadManager->Join();
+	Knight* knight = xnew<Knight>();
+	Knight* knight2 = xnew<Knight>(11);
+
+	xdelete(knight);
+	xdelete(knight2);
+
 }
 
