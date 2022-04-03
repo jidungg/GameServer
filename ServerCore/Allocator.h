@@ -13,3 +13,20 @@ public:
 	static void* Alloc(int32 size);
 	static void Release(void* ptr);
 };
+
+template<typename T>
+class STLAllocator
+{
+	using value_type = T;
+	template<typename Other>
+	STLAllocator(const STLAllocator<Other>&) {}
+	T* allocate(size_t count)
+	{
+		const int32 size = static_cast<int32>(count * sizeof(T));
+		return static_cast<T*>(xxalloc(size));
+	}
+	void deallocate(T* ptr, size_t count)
+	{
+		xxrelease(ptr);
+	}
+};
