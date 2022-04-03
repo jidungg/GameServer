@@ -161,7 +161,6 @@
     <ClInclude Include="Memory.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RefCounting.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
@@ -181,9 +180,6 @@
     </ClCompile>
     <ClCompile Include="RefCounting.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="ServerCore.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

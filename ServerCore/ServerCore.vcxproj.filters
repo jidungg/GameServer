@@ -48,7 +48,6 @@
     <ClInclude Include="RefCounting.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="Allocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
@@ -87,8 +86,5 @@
     <ClCompile Include="Memory.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="ServerCore.rc" />
   </ItemGroup>
 </Project>

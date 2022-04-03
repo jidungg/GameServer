@@ -12,17 +12,17 @@
 class Knight
 {
 public:
-	Knight() {  }
+	Knight() { _hp = 100; }
 	Knight(int hp) :_hp(hp){}
+	~Knight() {}
 	int _hp;
 };
 int main()
 {
-	Knight* knight = xnew<Knight>();
-	Knight* knight2 = xnew<Knight>(11);
-
-	xdelete(knight);
-	xdelete(knight2);
+	Knight* test = new Knight();
+	test->_hp = 100;
+	delete test;
+	test->_hp = 200;
 
 }
 
