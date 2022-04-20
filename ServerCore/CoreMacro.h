@@ -17,7 +17,7 @@
 }								
 
 //조건에 따라 CRASH를 내고 싶을 때 사용.
-#define ASSERT_CRASH(expr)		\\
+#define ASSERT_CRASH(expr)		\
 {								\
 	if (!(expr))					\
 	{								\
@@ -27,8 +27,8 @@
 }								
 
 #ifdef _DEBUG
-#define xxalloc(size) StompAllocator::Alloc(size)
-#define xxrelease(ptr) StompAllocator::Release(ptr)
+#define xxalloc(size) PoolAllocator::Alloc(size)
+#define xxrelease(ptr) PoolAllocator::Release(ptr)
 #else
 #define xxalloc(size) BaseAllocator::Alloc(size)
 #define xxrelease(ptr) BaseAllocator::Release(ptr)
