@@ -1,5 +1,5 @@
 #pragma once
-#include "pch.h"
+
 //상속해서 사용
 class RefCountable
 {

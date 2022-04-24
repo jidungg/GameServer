@@ -15,7 +15,7 @@ void BaseAllocator::Release(void* ptr)
 void* StompAllocator::Alloc(int32 size)
 {
 	//페이지 갯수 구하기
-	const int64 pageCount = (size + PAGE_SIZE - 1) / PAGE_SIZE;
+	const int pageCount = (size + PAGE_SIZE - 1) / PAGE_SIZE;
 	//오버플로우 방지용 오프셋 설정
 	const int64 dataOffset = pageCount * PAGE_SIZE - size;
 	//메모리 예약과 동시에 사용, 읽기쓰기 가능

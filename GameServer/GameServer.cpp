@@ -7,22 +7,54 @@
 #include <future>
 #include "ThreadManager.h"
 
+#include "RefCounting.h"
 #include "Memory.h"
+#include "Allocator.h"
 
 class Knight
 {
 public:
-	Knight() { _hp = 100; }
-	Knight(int hp) :_hp(hp){}
-	~Knight() {}
-	int _hp;
+	int32 _hp = rand() % 1000;
 };
+
+class Monster
+{
+public:
+	int64 _id = 0;
+};
+
 int main()
 {
-	Knight* test = new Knight();
-	test->_hp = 100;
-	delete test;
-	test->_hp = 200;
+	Knight* knights[100];
 
+	for (int32 i = 0; i < 100; i++)
+		knights[i] = ObjectPool<Knight>::Pop();
+
+	for (int32 i = 0; i < 100; i++)
+	{
+		ObjectPool<Knight>::Push(knights[i]);
+		knights[i] = nullptr;
+	}
+
+	shared_ptr<Knight> sptr = ObjectPool<Knight>::MakeShared();
+	shared_ptr<Knight> sptr2 = MakeShared<Knight>();
+
+	for (int32 i = 0; i < 5; i++)
+	{
+		GThreadManager->Launch([]()
+			{
+				while (true)
+				{
+					Knight* knight = xnew<Knight>();
+
+					cout << knight->_hp << endl;
+
+					this_thread::sleep_for(10ms);
+
+					xdelete(knight);
+				}
+			});
+	}
+
+	GThreadManager->Join();
 }
-

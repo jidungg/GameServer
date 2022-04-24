@@ -11,7 +11,7 @@ void DeadLockProfiler::PushLock(const char* name)
 	auto foundIt = _nameToId.find(name);
 	if (foundIt == _nameToId.end())
 	{
-		lockId = static_cast<int32>(_nameToId.size());
+		lockId = static_cast<int>(_nameToId.size());
 		_nameToId[name] = lockId;
 		_idToName[lockId] = name;
 	}

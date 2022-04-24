@@ -26,9 +26,6 @@ template<typename T>
 class STLAllocator
 {
 	using value_type = T;
-
-	STLAllocator() { }
-
 	template<typename Other>
 	STLAllocator(const STLAllocator<Other>&) {}
 	T* allocate(size_t count)
