@@ -50,6 +50,7 @@ void Lock::WriteUnlock(const char* name)
 	//readLock이 다 풀려야 writeunlock 가능.
 	if ((_lockFlag.load() & READ_COUNT_MASK) != 0)
 	{
+		std::cout << _lockFlag.load()<< " "<< _lockFlag;
 		CRASH("INVALID_UNLOCK_ORDER");
 	}
 	const int32 lockCount = --_writeCount;
