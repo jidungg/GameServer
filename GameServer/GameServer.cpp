@@ -7,102 +7,64 @@
 #include <future>
 #include "ThreadManager.h"
 
-#include "RefCounting.h"
-#include "Memory.h"
-#include "Allocator.h"
-
-using TL = TypeList<class Player, class Mage, class Knight, class Archer>;
-
-class Player
-{
-public:
-	Player()
-	{
-		INIT_TL(Player);
-	}
-	virtual ~Player() { }
-
-	DECLARE_TL
-};
-
-class Knight : public Player
-{
-public:
-	Knight() { INIT_TL(Knight); }
-};
-
-class Mage : public Player
-{
-
-public:
-	Mage() { INIT_TL(Mage); }
-};
-
-class Archer : public Player
-{
-
-public:
-	Archer() { INIT_TL(Archer) }
-};
-
-class Dog
-{
-
-};
+#include <WinSock2.h>
+#include <MSWSock.h>
+#include <WS2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
 
 int main()
 {
-	//TypeList<Mage, Knight>::Head whoAMI;
-	//TypeList<Mage, Knight>::Tail whoAMI2;
-
-	//TypeList<Mage, TypeList<Knight, Archer>>::Head whoAMI3;
-	//TypeList<Mage, TypeList<Knight, Archer>>::Tail::Head whoAMI4;
-	//TypeList<Mage, TypeList<Knight, Archer>>::Tail::Tail whoAMI5;
-
-	//int32 len1 = Length<TypeList<Mage, Knight>>::value;
-	//int32 len2 = Length<TypeList<Mage, Knight, Archer>>::value;
-	//
-	//
-	//// 3*3 
-	//TypeAt<TL, 0>::Result whoAMI6;
-	//TypeAt<TL, 1>::Result whoAMI7;
-	//TypeAt<TL, 2>::Result whoAMI8;
-
-	//int32 index1 = IndexOf<TL, Mage>::value;
-	//int32 index2 = IndexOf<TL, Archer>::value;
-	//int32 index3 = IndexOf<TL, Dog>::value;
-
-	//bool canConvert1 = Conversion<Player, Knight>::exists;
-	//bool canConvert2 = Conversion<Knight, Player>::exists;
-	//bool canConvert3 = Conversion<Knight, Dog>::exists;
-
-	/*{
-		Player* player = new Knight();
-
-		bool canCast = CanCast<Knight*>(player);
-		Knight* knight = TypeCast<Knight*>(player);
-
-
-		delete player;
-	}*/
-
+	WSADATA wsaData;
+	if (::WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
-		shared_ptr<Player> player = MakeShared<Knight>();
-
-		shared_ptr<Archer> archer = TypeCast<Archer>(player);
-		bool canCast = CanCast<Mage>(player);
-
+		return 0;
 	}
 
-	for (int32 i = 0; i < 5; i++)
+	SOCKET listenSocket = ::socket(AF_INET, SOCK_STREAM, NULL);
+	if (listenSocket == INVALID_SOCKET)
 	{
-		GThreadManager->Launch([]()
-			{
-				while (true)
-				{
-				}
-			});
+		int32 errCode = ::WSAGetLastError();
+		cout << "Socket errCode : " << errCode << endl;
+		return 0;
 	}
 
-	GThreadManager->Join();
+	SOCKADDR_IN serverAddr;
+	::memset(&serverAddr, 0, sizeof(serverAddr));
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_addr.s_addr = ::htonl(INADDR_ANY);
+	serverAddr.sin_port = ::htons(7777);
+
+	if (::bind(listenSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
+	{
+		int32 errCode = ::WSAGetLastError();
+		cout << "Bind errCode : " << errCode << endl;
+		return 0;
+	}
+
+	if (::listen(listenSocket, 10))
+	{
+		int32 errCode = ::WSAGetLastError();
+		cout << "Listen errCode : " << errCode << endl;
+		return 0;
+	}
+
+	while (true)
+	{
+		SOCKADDR_IN clientAddr;
+		::memset(&clientAddr, 0, sizeof(clientAddr));
+		int32 addrLen = sizeof(clientAddr);
+		SOCKET clientSocket = ::accept(listenSocket, (SOCKADDR*)&clientAddr, &addrLen);
+		if (clientSocket == INVALID_SOCKET)
+		{
+			int32 errCode = ::WSAGetLastError();
+			cout << "Accept errCode : " << errCode << endl;
+			return 0;
+		}
+
+		char ipAddress[16];
+		::inet_ntop(AF_INET, &clientAddr.sin_addr, ipAddress, sizeof(ipAddress));
+		cout << "Client connected. " << ipAddress << endl;
+	}
+
+	::WSACleanup();
 }
