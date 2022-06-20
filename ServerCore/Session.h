@@ -5,6 +5,7 @@
 
 class Session : public IocpObject
 {
+
 public:
 	Session();
 	virtual ~Session();
