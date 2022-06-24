@@ -1,0 +1,18 @@
+클라이언트를 끄면 정상 종료
+클라이언트 종료 흐름 
+1. 클라 창을 닫음
+2. 클라이언트에서 서버로 0을 보냄(Send는 호출되지 않음)
+3. 서버에서 GetQueuedCompletionStatus가 실패로 반환됨.
+4. errorcode 64(연결 끊김)
+5. Session이 EventType::Recv를 Dispatch 함.
+6. ProcessRecv가 호출됨.
+7. Disconnect가 호출됨.
+8. OnDisconnected가 호출됨
+9. ReleaseSession이 호출됨.
+10. RegisterDisconnect 호출됨.(.DisconnectEX 호출)
+11. 6.에서 호출한 ProcessRecv까지 반환됨.
+12. GetQueuedCompletionStatus가 반환됨. DisconnectEvent를 Dispatch 함
+13. ProcessDisconnect호출
+14. Session = nullptr 됨.
+
+서버를 끄면 비정상

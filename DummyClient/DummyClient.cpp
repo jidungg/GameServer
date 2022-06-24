@@ -25,7 +25,7 @@ public:
 	{
 		cout << "OnRecv Len = " << len << endl;
 		this_thread::sleep_for(1s);
-		//Send((BYTE*)sendBuffer, sizeof(sendBuffer));
+		Send((BYTE*)sendBuffer, sizeof(sendBuffer));
 		return len;
 	}
 	virtual void OnSend(int32 len) override
