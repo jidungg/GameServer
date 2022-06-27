@@ -20,7 +20,7 @@ public:
 	Session();
 	virtual ~Session();
 public:
-	void				Send(BYTE* buffer, int32 len);
+	void				Send(SendBufferRef sendBuffer);
 	bool				Connect();
 	void				Disconnect(const WCHAR* cause);
 
@@ -44,11 +44,11 @@ private:
 	bool		RegisterConnect();
 	bool		RegisterDisonnect();
 	void		RegisterRecv();
-	void		RegisterSend(SendEvent* sendEvent);
+	void		RegisterSend();
 	
 	void		ProcessConnect();
 	void		ProcessRecv(int32 numofBytes);
-	void		ProcessSend(SendEvent* sendEvent, int32 numofBytes);
+	void		ProcessSend(int32 numofBytes);
 	void		ProcessDisconnect();
 	void		HandleError(int32 errorCode);
 
@@ -57,7 +57,7 @@ protected:
 	virtual void	OnConnected(){}
 	virtual int32	OnRecv(BYTE* buffer, int32 len) { return len; }
 	virtual void	OnSend(int32 len) {}
-	virtual void	OnDIsconnected() {}
+	virtual void	OnDisconnected() {}
 
 private:
 	weak_ptr<Service> _service;
@@ -67,11 +67,14 @@ private:
 
 private:
 	USE_LOCK;
-	RecvBuffer		_recvBuffer;
+	RecvBuffer				_recvBuffer;
 
+	Queue<SendBufferRef>	_sendQueue;
+	Atomic<bool>			_sendRegistered = false;
 private:
 	ConnectEvent	_connectEvent;
 	DisconnectEvent	_disconnectEvent;
 	RecvEvent		_recvEvent;
+	SendEvent		_sendEvent;
 };
 

@@ -14,10 +14,10 @@ private:
 
 	void DFS(int32 index);
 
-	unordered_map<const char*, int32> _nameToId; //lock의 ID를 보관
-	unordered_map<int32, const char*> _idToName; //lock의 ID를 보관
-	stack<int32> _lockStack; // 현재 걸려있는 lock의 id들 보관
-	map<int32, set<int32>> _lockHistory; // 간선 정보
+	unordered_map<const char*, int32>	_nameToId; //lock의 ID를 보관
+	unordered_map<int32, const char*>	_idToName; //lock의 ID를 보관
+	
+	map<int32, set<int32>>				_lockHistory; // 간선 정보
 
 	Mutex _lock;
 
