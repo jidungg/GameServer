@@ -3,6 +3,7 @@
 #include "Allocator.h"
 #include <vector>
 #include <list>
+#include <array>
 #include <queue>
 #include <stack>
 #include <map>
@@ -10,6 +11,9 @@
 #include <unordered_map>
 #include <unordered_set>
 using namespace std;
+
+template<typename Type, uint32 Size>
+using Array = array<Type, Size>;
 
 template<typename T>
 using Vector = vector<T, STLAllocator<T>>;
