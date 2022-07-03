@@ -13,4 +13,5 @@ ReigsterSend를 Send 할 때마다 실행하지 말고,
 
 SendBufferPooling
 매 번 sendbuffer를 만들어주는게 아쉬움. 버퍼 크기도 실제 사용크기보다 훨씬 클 수가 있음. 풀링적용
-블랙클로버
+SendBufferChunk가 스레드 마다 하나씩 존재함. 
+Open시 
