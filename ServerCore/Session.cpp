@@ -15,10 +15,19 @@ Session::~Session()
 
 void Session::Send(SendBufferRef sendBuffer)
 {
-	WRITE_LOCK;
-	_sendQueue.push(sendBuffer);
+	if (IsConnected() == false)
+		return;
 
-	if (_sendRegistered.exchange(true) == false)
+	bool registerSend = false;
+
+	{
+		WRITE_LOCK;
+		_sendQueue.push(sendBuffer);
+
+		if (_sendRegistered.exchange(true) == false)
+			registerSend = true;
+	}
+	if(registerSend)
 		RegisterSend();
 }
 
@@ -33,9 +42,7 @@ void Session::Disconnect(const WCHAR* cause)
 		return;
 
 	wcout << "Disconnect : " << cause << endl;
-	OnDisconnected();
 
-	GetService()->ReleaseSession(GetSessionRef());
 	RegisterDisonnect();
 }
 
@@ -239,6 +246,9 @@ void Session::ProcessSend(int32 numOfBytes)
 void Session::ProcessDisconnect()
 {
 	_disconnectEvent.owner = nullptr;
+
+	OnDisconnected();
+	GetService()->ReleaseSession(GetSessionRef());
 }
 
 void Session::HandleError(int32 errorCode)
@@ -253,4 +263,33 @@ void Session::HandleError(int32 errorCode)
 		cout << "Handle Error: " << errorCode << endl;
 		break;
 	}
+}
+
+PacketSession::PacketSession()
+{
+}
+
+PacketSession::~PacketSession()
+{
+}
+
+int32 PacketSession::OnRecv(BYTE* buffer, int32 len)
+{
+	int32 processLen = 0;
+
+	while (true)
+	{
+		int32 dataSize = len - processLen;
+		if (dataSize < sizeof(PacketHeader))
+			break;
+
+		PacketHeader header = *(reinterpret_cast<PacketHeader*>(&buffer[processLen]));
+		if (dataSize < header.size)
+			break; 
+
+		OnRecvPacket(&buffer[processLen], header.size);
+
+		processLen += header.size;
+	}
+	return processLen;
 }

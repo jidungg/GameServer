@@ -80,7 +80,7 @@ void SendBufferChunk::Reset()
 SendBufferRef SendBufferChunk::Open(uint32 allocSize)
 {
 	ASSERT_CRASH(allocSize <= SEND_BUFFER_CHUNK_SIZE);
-	ASSERT_CRASH(_open = false);
+	ASSERT_CRASH(_open == false);
 
 	if (allocSize > FreeSize())
 		return nullptr;
@@ -92,7 +92,7 @@ SendBufferRef SendBufferChunk::Open(uint32 allocSize)
 
 void SendBufferChunk::Close(uint32 writeSize)
 {
-	ASSERT_CRASH(_open = true);
+	ASSERT_CRASH(_open == true);
 	_open = false;
 	_usedSize += writeSize;
 }

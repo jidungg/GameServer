@@ -34,7 +34,7 @@ public:
 
 	bool IsOpen() { return _open; }
 	BYTE* Buffer() { return &_buffer[_usedSize]; }
-	uint32 FreeSize() { return _buffer.size() - _usedSize; }
+	uint32				FreeSize() { return static_cast<uint32>(_buffer.size()) - _usedSize; }
 private:
 	Array<BYTE, SEND_BUFFER_CHUNK_SIZE> _buffer = {};
 	bool _open = false;
