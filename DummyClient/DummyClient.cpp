@@ -3,6 +3,7 @@
 #include "Service.h"
 #include "Session.h"
 #include "BufferReader.h"
+#include "ClientPacketHandler.h"
 
 char sendData[] = "Hello World";
 
@@ -24,25 +25,10 @@ public:
 		//cout << "Disconncted" << endl;
 	}
 
-	virtual int32 OnRecvPacket(BYTE* buffer, int32 len) override
+	virtual void OnRecvPacket(BYTE* buffer, int32 len) override
 	{
-		BufferReader br(buffer, len);
+		ClientPacketHandler::HandlePacket(buffer,len);
 
-		PacketHeader header;
-		br >> header;
-
-		uint32 id;
-		uint32 hp;
-		uint16 attack;
-		br >> id >> hp >> attack;
-
-		cout << "ID: " <<id<< " HP : " << hp << " ATT : " << attack << endl;
-
-		char recvBuffer[4096];
-		br.Read(recvBuffer, header.size - sizeof(PacketHeader) - 4 - 4 - 2);
-		cout << recvBuffer << endl;
-
-		return len;
 	}
 
 	virtual void OnSend(int32 len) override
@@ -59,7 +45,7 @@ int main()
 		NetAddress(L"127.0.0.1", 7777),
 		MakeShared<IocpCore>(),
 		MakeShared<ServerSession>,
-		5);
+		1);
 
 	ASSERT_CRASH(service->Start());
 
