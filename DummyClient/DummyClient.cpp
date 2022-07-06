@@ -4,6 +4,7 @@
 #include "Session.h"
 #include "BufferReader.h"
 #include "ClientPacketHandler.h"
+#include <tchar.h>
 
 char sendData[] = "Hello World";
 

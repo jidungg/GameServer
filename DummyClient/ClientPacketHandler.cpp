@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ClientPacketHandler.h"
 #include "BufferReader.h"
+#include "Protocol.pb.h"
 
 void ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len)
 {
@@ -17,46 +18,24 @@ void ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len)
 	}
 }
 
-//TEMP
-struct BuffData
-{
-	uint64 buffId;
-	float remainTime;
-};
-struct S_TEST
-{
-	uint32 id;
-	uint32 hp;
-	uint16 attack;
-
-	vector<BuffData> buffs;
-};
 void ClientPacketHandler::Handle_S_TEST(BYTE* buffer, int32 len)
 {
-	BufferReader br(buffer, len);
+	Protocol::S_TEST pkt;
 
-	PacketHeader header;
-	br >> header;
+	ASSERT_CRASH(pkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader)));
 
-	uint32 id;
-	uint32 hp;
-	uint16 attack;
-	br >> id >> hp >> attack;
+	cout << pkt.id() << " " << pkt.hp() << " " << pkt.attack() << endl;
 
-	cout << "ID: " << id << " HP : " << hp << " ATT : " << attack << endl;
+	cout << "BUFSIZE : " << pkt.buffs_size() << endl;
 
-	vector<BuffData> buffs;
-	uint16 buffCount;
-	br >> buffCount;
-
-	buffs.resize(buffCount);
-	for (int32 i = 0; i < buffCount; i++)
+	for (auto& buf : pkt.buffs())
 	{
-		br >> buffs[i].buffId >> buffs[i].remainTime;
-	}
-	cout << "BufCount: " << buffCount << endl;
-	for (int32 i = 0; i < buffCount; i++)
-	{
-		cout << "Buf Info: " << buffs[i].buffId << " " << buffs[i].remainTime << endl;
+		cout << "BUFINFO: " << buf.buffid() << " " << buf.remaintime() << endl;
+		cout << "VICTIMS: " << buf.victims_size() << endl;
+		for (auto& vic : buf.victims())
+		{
+			cout << vic << " ";
+		}
+		cout << endl;
 	}
 }
