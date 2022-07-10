@@ -5,7 +5,7 @@
 #include "GameSession.h"
 #include "GameSessionManager.h"
 #include "BufferWriter.h"
-#include "ServerPacketHandler.h"
+#include "ClientPacketHandler.h"
 #include "Protocol.pb.h"
 
 int main()
@@ -49,7 +49,7 @@ int main()
 			data->add_victims(1000);
 			data->add_victims(2000);
 		}
-		SendBufferRef sendBuffer =  ServerPacketHandler::MakeSendBuffer(pkt);
+		SendBufferRef sendBuffer =  ClientPacketHandler::MakeSendBuffer(pkt);
 
 		GSessionManager.BroadCast(sendBuffer);
 
