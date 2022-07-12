@@ -34,7 +34,7 @@ SendBufferRef SendBufferManager::Open(uint32 size)
 		LSendBufferChunk->Reset();
 	}
 
-	cout << "FREE SendBuffer Chunk : " << LSendBufferChunk->FreeSize() << endl;
+	
 	return LSendBufferChunk->Open(size);
 }
 
