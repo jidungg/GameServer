@@ -58,28 +58,32 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 
 	uint64 index = pkt.playerindex();
-	//Validation Check
+	// TODO : Validation
 
-	PlayerRef player = gameSession->_players[index];
-	GRoom.Enter(player);
+	PlayerRef player = gameSession->_players[index]; // READ_ONLY?
+
+	GRoom->DoAsync(&Room::Enter, player);
 
 	Protocol::S_ENTER_GAME enterGamePkt;
 	enterGamePkt.set_success(true);
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(enterGamePkt);
-	session->Send(sendBuffer);
-	 
+	player->ownerSession->Send(sendBuffer);
+
 	return true;
 }
+
 
 bool Handle_C_CHAT(PacketSessionRef& session, Protocol::C_CHAT& pkt)
 {
 	std::cout << pkt.msg() << endl;
 
+
 	Protocol::S_CHAT chatPkt;
 	chatPkt.set_msg(pkt.msg());
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(chatPkt);
 
-	GRoom.Broadcast(sendBuffer);
+	GRoom->DoAsync(&Room::Broadcast, sendBuffer);
+
 	return true;
 }
 

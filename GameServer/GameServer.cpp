@@ -6,15 +6,21 @@
 #include "GameSessionManager.h"
 #include "BufferWriter.h"
 #include "ClientPacketHandler.h"
+#include <tchar.h>
 #include "Protocol.pb.h"
+#include "Job.h"
+#include "Room.h"
 
 int main()
 {
+
+
 	ClientPacketHandler::Init();
 
-	ServerServiceRef service = MakeShared<ServerService>(NetAddress(L"127.0.0.1", 7777),
+	ServerServiceRef service = MakeShared<ServerService>(
+		NetAddress(L"127.0.0.1", 7777),
 		MakeShared<IocpCore>(),
-		MakeShared<GameSession>,
+		MakeShared<GameSession>, // TODO : SessionManager 등
 		100);
 
 	ASSERT_CRASH(service->Start());
