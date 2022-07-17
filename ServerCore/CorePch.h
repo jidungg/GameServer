@@ -10,11 +10,10 @@
 #include <iostream>
 using namespace std;
 
-#include <WinSock2.h>
-#include <MSWSock.h>
-#include <WS2tcpip.h>
+#include <winsock2.h>
+#include <mswsock.h>
+#include <ws2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
-
 
 #include "Lock.h"
 #include "ObjectPool.h"
@@ -22,4 +21,4 @@ using namespace std;
 #include "Memory.h"
 #include "SendBuffer.h"
 #include "Session.h"
-#include "LockQueue.h"
+#include "JobQueue.h"
