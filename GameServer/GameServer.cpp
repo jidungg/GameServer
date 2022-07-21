@@ -11,6 +11,7 @@
 #include "Job.h"
 #include "Room.h"
 #include "Player.h"
+#include "DBConnectionPool.h"
 
 enum
 {
@@ -26,6 +27,9 @@ void DoWorkerJob(ServerServiceRef& service)
 		// 네트워크 입출력 처리 -> 인게임 로직까지 (패킷 핸들러에 의해)
 		service->GetIocpCore()->Dispatch(10);
 
+		//타이머 Job 분배
+		ThreadManager::DistributeReservedJobs();
+
 		// 글로벌 큐
 		ThreadManager::DoGlobalQueueWork();
 	}
@@ -33,13 +37,69 @@ void DoWorkerJob(ServerServiceRef& service)
 
 int main()
 {
+	ASSERT_CRASH( GDBConnectionPool->Conncect(1,L"Driver={ODBC Driver 17 for SQL Server};Server=(localdb)\\MSSQLLocalDB;Trusted_Connection=Yes;Database=ServerDB;"));
+	
+	{
+		auto query = L"									\
+			DROP TABLE IF EXISTS [dbo].[Gold];			\
+			CREATE TABLE [dbo].[Gold]					\
+			(											\
+				[id] INT NOT NULL PRIMARY KEY IDENTITY, \
+				[gold] INT NULL							\
+			);";
+
+		DBConnection* dbConn = GDBConnectionPool->Pop();
+		ASSERT_CRASH(dbConn->Execute(query));
+		GDBConnectionPool->Push(dbConn);
+	}
+
+	//WRITE
+	for (int32 i = 0; i < 3; i++)
+	{
+		DBConnection* dbConn = GDBConnectionPool->Pop();
+		dbConn->Unbind();
+
+		int32 gold = 100;
+		SQLLEN len = 0;
+		ASSERT_CRASH(dbConn->BindParam(1, SQL_C_LONG, SQL_INTEGER, sizeof(gold), &gold, &len));
+
+		ASSERT_CRASH(dbConn->Execute(L"INSERT INTO [dbo].[Gold]([gold]) VALUES(?)"));
+		GDBConnectionPool->Push(dbConn);
+	}
+
+	//Read
+	{
+		DBConnection* dbConn = GDBConnectionPool->Pop();
+		dbConn->Unbind();
+
+		int32 gold = 100;
+		SQLLEN len = 0;
+		ASSERT_CRASH(dbConn->BindParam(1, SQL_C_LONG, SQL_INTEGER, sizeof(gold), &gold, &len));
+
+		int32 outId = 0;
+		SQLLEN outIdLen = 0;
+		ASSERT_CRASH( dbConn->BindCol(1, SQL_C_LONG, sizeof(outId), &outId, &outIdLen));
+
+		int32 outGold = 0;
+		SQLLEN outGoldLen = 0;
+		ASSERT_CRASH(dbConn->BindCol(2, SQL_C_LONG, sizeof(outGold), &outGold, &outGoldLen));
+
+		ASSERT_CRASH(dbConn->Execute(L"SELECT id, gold FROM [dbo].[Gold] WHERE gold = (?)"));
+
+		while (dbConn->Fetch())
+		{
+			cout << "id: " << outId << " Gold: " << outGold << endl;
+		}
+
+		GDBConnectionPool->Push(dbConn);
+	}
 	ClientPacketHandler::Init();
 
 	ServerServiceRef service = MakeShared<ServerService>(
 		NetAddress(L"127.0.0.1", 7777),
 		MakeShared<IocpCore>(),
 		MakeShared<GameSession>, // TODO : SessionManager 등
-		100);
+		1);
 
 	ASSERT_CRASH(service->Start());
 
