@@ -3,6 +3,7 @@
 #include "CoreTLS.h"
 #include "CoreGlobal.h"
 #include "GlobalQueue.h"
+#include "JobTimer.h"
 
 ThreadManager::ThreadManager()
 {
@@ -62,4 +63,9 @@ void ThreadManager::DoGlobalQueueWork()
 
 		jobQueue->Execute();
 	}
+}
+
+void ThreadManager::DistributeReservedJobs()
+{
+	GJobTimer->Distribute(::GetTickCount64());
 }
