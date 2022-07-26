@@ -16,7 +16,7 @@ GlobalQueue* GGlobalQueue = nullptr;
 JobTimer* GJobTimer = nullptr;
 
 DeadLockProfiler* GDeadLockProfiler = nullptr;
-DBConnectionPool* GDBConnectionPool;
+DBConnectionPool* GDBConnectionPool = nullptr;
 
 class CoreGlobal
 {
