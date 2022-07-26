@@ -45,5 +45,4 @@ using HashMap = unordered_map<Key, Type, Hasher, KeyEq, STLAllocator<pair<const 
 template<typename Key, typename Hasher = hash<Key>, typename KeyEq = equal_to<Key>>
 using HashSet = unordered_set<Key, Hasher, KeyEq, STLAllocator<Key>>;
 
-using String = basic_string<char, char_traits<char>, STLAllocator<char>>;
-using WString = basic_string<wchar_t, char_traits<wchar_t>, STLAllocator<wchar_t>>;
+using String = basic_string<wchar_t, char_traits<wchar_t>, STLAllocator<wchar_t>>;
