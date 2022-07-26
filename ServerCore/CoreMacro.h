@@ -2,6 +2,10 @@
 
 #define OUT
 
+
+#define NAMESPACE_BEGIN(name)	namespace name {
+#define NAMESPACE_END			}
+
 #define USE_MANY_LOCKS(count) Lock _locks[count];
 #define USE_LOCK				USE_MANY_LOCKS(1)
 #define READ_LOCK_IDX(idx)		ReadLockGuard readLockGuard_##idx(_locks[idx], typeid(this).name());
