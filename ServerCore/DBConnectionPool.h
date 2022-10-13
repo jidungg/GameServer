@@ -7,7 +7,7 @@ public:
 	DBConnectionPool();
 	~DBConnectionPool();
 
-	bool Conncect(int32 connectCount, const WCHAR* connectString);
+	bool Connect(int32 connectCount, const WCHAR* connectString);
 	void Clear();
 
 	DBConnection* Pop();

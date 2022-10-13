@@ -5,3 +5,4 @@ MOVE .\dist\ProcedureGenerator.exe .\GenProcs.exe
 @RD /S /Q .\dist
 DEL /S /F /Q .\PacketGenerator.spec
 PAUSE
+¤·

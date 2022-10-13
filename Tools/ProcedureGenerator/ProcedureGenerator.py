@@ -5,7 +5,7 @@ import XmlDBParser
 
 def main():
     arg_parser = argparse.ArgumentParser(description = 'StoredProcedure Generator')
-    arg_parser.add_argument('--path', type=str, default='D:/Workbench/GameServer/GameServer/GameDB.xml', help='Xml Path')
+    arg_parser.add_argument('--path', type=str, default='../../GameServer/GameDB.xml', help='Xml Path')
     arg_parser.add_argument('--output', type=str, default='GenProcedures.h', help='Output File')
     args = arg_parser.parse_args()
 

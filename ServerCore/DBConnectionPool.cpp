@@ -10,7 +10,7 @@ DBConnectionPool::~DBConnectionPool()
 	Clear();
 }
 
-bool DBConnectionPool::Conncect(int32 connectCount, const WCHAR* connectString)
+bool DBConnectionPool::Connect(int32 connectCount, const WCHAR* connectString)
 {
 	WRITE_LOCK;
 	if (::SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &_environment) != SQL_SUCCESS)

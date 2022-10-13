@@ -41,11 +41,12 @@ void DoWorkerJob(ServerServiceRef& service)
 
 int main()
 {
-	ASSERT_CRASH(GDBConnectionPool->Conncect(1, L"Driver={ODBC Driver 17 for SQL Server};Server=(localdb)\\MSSQLLocalDB;Database=ServerDB;Trusted_Connection=Yes;"));
+	//TODO : connectionString 하드코딩된거 항목별로 나눠서 파일로 보관하고 읽어서 호출.
+	ASSERT_CRASH(GDBConnectionPool->Connect(1, L"Driver={ODBC Driver 17 for SQL Server};Server=(localdb)\\MSSQLLocalDB;Database=ServerDB;Trusted_Connection=Yes;"));
 
 	DBConnection* dbConn = GDBConnectionPool->Pop();
 	DBSynchronizer dbSync(*dbConn);
-	dbSync.Synchronize(L"GameDB.xml");
+	dbSync.Synchronize(L"GameDB.xml"); 
 
 	{
 		WCHAR name[] = L"김지완";
@@ -85,7 +86,7 @@ int main()
 	ServerServiceRef service = MakeShared<ServerService>(
 		NetAddress(L"127.0.0.1", 7777),
 		MakeShared<IocpCore>(),
-		MakeShared<GameSession>, // TODO : SessionManager 등
+		MakeShared<GameSession>,
 		1);
 
 	ASSERT_CRASH(service->Start());
