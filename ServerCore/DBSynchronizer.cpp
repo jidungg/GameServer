@@ -9,6 +9,9 @@
 
 namespace SP
 {
+	/// <summary>
+	/// DataBase에서 테이블에 관련된 정보를 가져오는 쿼리.
+	/// </summary>
 	const WCHAR* QTablesAndColumns =
 		L"	SELECT c.object_id, t.name AS tableName, c.name AS columnName, c.column_id, c.user_type_id, c.max_length,"
 		"		c.is_nullable, c.is_identity, CAST(ic.seed_value AS BIGINT) AS seedValue, CAST(ic.increment_value AS BIGINT) AS incValue,"
@@ -43,6 +46,9 @@ namespace SP
 		template<int32 N> void Out_DefaultConstraintName(OUT WCHAR(&value)[N]) { BindCol(12, value); }
 	};
 
+	/// <summary>
+	/// DataBase에서 Index에 관련된 정보를 가져오는 쿼리.
+	/// </summary>
 	const WCHAR* QIndexes =
 		L"	SELECT i.object_id, i.name as indexName, i.index_id, i.type, i.is_primary_key,"
 		"		i.is_unique_constraint, ic.column_id, COL_NAME(ic.object_id, ic.column_id) as columnName"
@@ -79,10 +85,6 @@ namespace SP
 		void Out_Body(OUT WCHAR* value, int32 len) { BindCol(1, value, len); }
 	};
 }
-
-/*--------------------
-	DBSynchronizer
----------------------*/
 
 DBSynchronizer::~DBSynchronizer()
 {
