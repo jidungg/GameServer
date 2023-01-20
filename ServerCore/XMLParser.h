@@ -31,7 +31,7 @@ public:
 	int64				GetInt64Value(int64 defaultValue = 0);
 	float				GetFloatValue(float defaultValue = 0.0f);
 	double				GetDoubleValue(double defaultValue = 0.0);
-	const WCHAR* GetStringValue(const WCHAR* defaultValue = L"");
+	const WCHAR*		GetStringValue(const WCHAR* defaultValue = L"");
 
 	XmlNode				FindChild(const WCHAR* key);
 	Vector<XmlNode>		FindChildren(const WCHAR* key);

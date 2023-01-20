@@ -26,9 +26,6 @@ enum class DataType
 	NVarChar = 231,
 };
 
-/*-------------
-	Column
---------------*/
 
 class Column
 {
@@ -49,9 +46,6 @@ public:
 	String				_defaultConstraintName; // DB
 };
 
-/*-----------
-	Index
-------------*/
 
 enum class IndexType
 {
@@ -78,9 +72,6 @@ public:
 	Vector<ColumnRef>	_columns;
 };
 
-/*-----------
-	Table
-------------*/
 
 class Table
 {
@@ -94,9 +85,6 @@ public:
 	Vector<IndexRef>	_indexes;
 };
 
-/*----------------
-	Procedures
------------------*/
 
 struct Param
 {
@@ -118,9 +106,6 @@ public:
 	Vector<Param>		_parameters;  // XML
 };
 
-/*-------------
-	Helpers
---------------*/
 
 class Helpers
 {

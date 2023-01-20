@@ -10,11 +10,11 @@
     <Filter Include="Protocol">
       <UniqueIdentifier>{bb36301c-e469-4428-8b76-e3cbb6d05236}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameContents">
-      <UniqueIdentifier>{3ab98574-2eb6-43c6-9e44-9c0265cbeb88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB">
       <UniqueIdentifier>{39ac43e9-5747-4e90-a725-d3a5895c4325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB\GameContents">
+      <UniqueIdentifier>{3ab98574-2eb6-43c6-9e44-9c0265cbeb88}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,10 +43,10 @@
       <Filter>Protocol</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>GameContents</Filter>
+      <Filter>DB\GameContents</Filter>
     </ClCompile>
     <ClCompile Include="Room.cpp">
-      <Filter>GameContents</Filter>
+      <Filter>DB\GameContents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -72,10 +72,10 @@
       <Filter>Protocol</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>GameContents</Filter>
+      <Filter>DB\GameContents</Filter>
     </ClInclude>
     <ClInclude Include="Room.h">
-      <Filter>GameContents</Filter>
+      <Filter>DB\GameContents</Filter>
     </ClInclude>
     <ClInclude Include="GenProcedures.h">
       <Filter>DB</Filter>

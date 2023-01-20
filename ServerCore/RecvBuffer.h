@@ -1,4 +1,7 @@
 #pragma once
+/// <summary>
+/// 중간에 잘려서 오는 패킷처리
+/// </summary>
 class RecvBuffer
 {
 	enum { BUFER_COUNT = 10 };

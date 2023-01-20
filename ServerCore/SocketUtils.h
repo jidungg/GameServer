@@ -1,6 +1,9 @@
 #pragma once
 #include "NetAddress.h"
 
+/// <summary>
+/// 
+/// </summary>
 class SocketUtils
 {
 public:

@@ -34,7 +34,9 @@ class DBSynchronizer
 	};
 
 public:
-	DBSynchronizer(DBConnection& conn) : _dbConn(conn) { }
+	DBSynchronizer(DBConnection& conn) : _dbConn(conn) { 
+		GConsoleLogger->WriteStdOut(Color::RED, L"Synchronizer Create\n");
+	}
 	~DBSynchronizer();
 
 	bool		Synchronize(const WCHAR* path);

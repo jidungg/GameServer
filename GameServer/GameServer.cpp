@@ -41,12 +41,21 @@ void DoWorkerJob(ServerServiceRef& service)
 
 int main()
 {
+	GConsoleLogger->WriteStdOut(Color::RED,L"start\n");
+
 	//TODO : connectionString 하드코딩된거 항목별로 나눠서 파일로 보관하고 읽어서 호출.
 	ASSERT_CRASH(GDBConnectionPool->Connect(1, L"Driver={ODBC Driver 17 for SQL Server};Server=(localdb)\\MSSQLLocalDB;Database=ServerDB;Trusted_Connection=Yes;"));
-
+	
+	GConsoleLogger->WriteStdOut(Color::RED, L"Connect\n");
+	
 	DBConnection* dbConn = GDBConnectionPool->Pop();
+
+	GConsoleLogger->WriteStdOut(Color::RED, L"Pop\n");
+
 	DBSynchronizer dbSync(*dbConn);
 	dbSync.Synchronize(L"GameDB.xml"); 
+
+	GConsoleLogger->WriteStdOut(Color::RED, L"Synchronize\n");
 
 	{
 		WCHAR name[] = L"김지완";
@@ -80,11 +89,18 @@ int main()
 				L"ID[%d] Gold[%d] Name[%s]\n", id, gold, name);
 		}
 	}
+	GConsoleLogger->WriteStdOut(Color::RED, L"DBEnd\n");
 
 	ClientPacketHandler::Init();
 
+	
+	SOCKADDR_IN addr;
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	addr.sin_port = htons(7777);
+
 	ServerServiceRef service = MakeShared<ServerService>(
-		NetAddress(L"127.0.0.1", 7777),
+		NetAddress(addr),
 		MakeShared<IocpCore>(),
 		MakeShared<GameSession>,
 		1);

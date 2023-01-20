@@ -11,7 +11,6 @@ void JobTimer::Reserve(uint64 tickAfter, weak_ptr<JobQueue> owner, JobRef job)
 	_items.push(TimerItem{ executeTick, jobData });
 }
 
-//실행할 시간이 된 TimerItem들만 골라서 실행
 void JobTimer::Distribute(uint64 now)
 {
 	if (_distributing.exchange(true) == true)
@@ -20,7 +19,7 @@ void JobTimer::Distribute(uint64 now)
 	Vector<TimerItem> items;
 	{
 		WRITE_LOCK
-		while (_items.empty() == false)
+		while (_items.empty() == false)   
 		{
 			const TimerItem& timerItem = _items.top();
 			if (now < timerItem.executeTick)
