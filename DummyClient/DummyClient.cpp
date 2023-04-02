@@ -46,6 +46,8 @@ public:
 
 int main()
 {
+	CoreGlobal::Instantiate();
+
 	ServerPacketHandler::Init();
 
 	this_thread::sleep_for(1s);
@@ -63,7 +65,7 @@ int main()
 	cout << "Input Server IP: ";
 	wcin >> ip;
 
-	ClientServiceRef service = MakeShared<ClientService>(
+	ClientNetServiceRef service = MakeShared<ClientNetService>(
 		NetAddress(ip,7777),
 		MakeShared<IocpCore>(),
 		MakeShared<ServerSession>,

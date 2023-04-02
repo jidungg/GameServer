@@ -85,9 +85,9 @@ int32 DBConnection::GetRowCount()
 
 void DBConnection::Unbind()
 {
-	SQLFreeStmt(_statement, SQL_UNBIND);
-	SQLFreeStmt(_statement, SQL_RESET_PARAMS);
-	SQLFreeStmt(_statement, SQL_CLOSE);
+	::SQLFreeStmt(_statement, SQL_UNBIND);
+	::SQLFreeStmt(_statement, SQL_RESET_PARAMS);
+	::SQLFreeStmt(_statement, SQL_CLOSE);
 }
 
 bool DBConnection::BindParam(int32 paramIndex, bool* value, SQLLEN* index)

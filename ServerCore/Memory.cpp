@@ -66,10 +66,7 @@ void* Memory::Allocate(int32 size)
 	{
 		header = _poolTable[allocSize]->Pop();
 	}
-#endif // _STOMP
-
-
-
+#endif 
 
 	return MemoryHeader::AttachHeader(header, allocSize);
 }

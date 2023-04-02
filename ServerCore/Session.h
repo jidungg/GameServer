@@ -4,13 +4,13 @@
 #include "NetAddress.h"
 #include "RecvBuffer.h"
 
-class Service;
+class NetService;
 
 class Session : public IocpObject
 {
 	friend class Listener;
 	friend class IocpCore;
-	friend class Service;
+	friend class NetService;
 
 	enum 
 	{
@@ -24,8 +24,8 @@ public:
 	bool				Connect();
 	void				Disconnect(const WCHAR* cause);
 
-	shared_ptr<Service> GetService() { return _service.lock(); }
-	void				SetService(shared_ptr<Service> service) { _service = service; }
+	shared_ptr<NetService> GetService() { return _service.lock(); }
+	void				SetService(shared_ptr<NetService> service) { _service = service; }
 public:
 	/* 정보 관련 */
 	void		SetNetAddress(NetAddress address) { _netAddress = address; }
@@ -60,7 +60,7 @@ protected:
 	virtual void	OnDisconnected() {}
 
 private:
-	weak_ptr<Service> _service;
+	weak_ptr<NetService> _service;
 	SOCKET			_socket = INVALID_SOCKET;
 	NetAddress		_netAddress = {};
 	Atomic<bool>	_connected = false;

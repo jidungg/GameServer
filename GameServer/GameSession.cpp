@@ -1,17 +1,18 @@
 #include "pch.h"
 #include "GameSession.h"
+#include "GlobalInstances.h"
 #include "GameSessionManager.h"
 #include "ClientPacketHandler.h"
 #include "Room.h"
 
 void GameSession::OnConnected()
 {
-	GSessionManager.Add(static_pointer_cast<GameSession>(shared_from_this()));
+	GSessionManager->Add(static_pointer_cast<GameSession>(shared_from_this()));
 }
 
 void GameSession::OnDisconnected()
 {
-	GSessionManager.Remove(static_pointer_cast<GameSession>(shared_from_this()));
+	GSessionManager->Remove(static_pointer_cast<GameSession>(shared_from_this()));
 	
 	if (_currentPlayer)
 	{

@@ -1,28 +1,22 @@
 ﻿#include "pch.h"
 #include "ThreadManager.h"
 #include "Service.h"
-#include "Session.h"
-#include "GameSession.h"
 #include "GameSessionManager.h"
-#include "BufferWriter.h"
+#include "GameSession.h"
 #include "ClientPacketHandler.h"
-#include <tchar.h>
-#include "Protocol.pb.h"
-#include "Job.h"
-#include "Room.h"
-#include "Player.h"
 #include "DBConnectionPool.h"
 #include "DBBind.h"
-#include "XMLParser.h"
 #include "DBSynchronizer.h"
 #include "GenProcedures.h"
+
+
 
 enum
 {
 	WORKER_TICK = 64
 };
 
-void DoWorkerJob(ServerServiceRef& service)
+void DoWorkerJob(ServerNetServiceRef& service)
 {
 	while (true)
 	{
@@ -41,6 +35,9 @@ void DoWorkerJob(ServerServiceRef& service)
 
 int main()
 {
+	CoreGlobal::Instantiate();
+	GlobalInstances::Instantiate();
+
 	GConsoleLogger->WriteStdOut(Color::RED,L"start\n");
 
 	//TODO : connectionString 하드코딩된거 항목별로 나눠서 파일로 보관하고 읽어서 호출.
@@ -99,7 +96,7 @@ int main()
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port = htons(7777);
 
-	ServerServiceRef service = MakeShared<ServerService>(
+	ServerNetServiceRef service = MakeShared <ServerNetService>(
 		NetAddress(addr),
 		MakeShared<IocpCore>(),
 		MakeShared<GameSession>,
@@ -114,7 +111,7 @@ int main()
 				DoWorkerJob(service);
 			});
 	}
-
+	
 	// Main Thread
 	DoWorkerJob(service);
 
