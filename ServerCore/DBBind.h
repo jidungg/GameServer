@@ -1,6 +1,7 @@
 #pragma once
 #include "DBConnection.h"
 
+//C 갯수 만큼 1로 채운 value
 template<int32 C>
 struct FullBits { enum { value = (1 << (C - 1)) | FullBits<C-1>::value }; };
 
@@ -98,8 +99,11 @@ public:
 protected:
 	DBConnection&	_dbConnection;
 	const WCHAR*	_query;
+
+	//가변적인 길이의 param(ex 문자열)일 경우 그 길이
 	SQLLEN			_paramIndex[ParamCount > 0 ? ParamCount : 1];
 	SQLLEN			_columnIndex[ColumnCount > 0 ? ColumnCount : 1];
+
 	uint64			_paramFlag;
 	uint64			_columnFlag;
 };

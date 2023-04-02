@@ -92,19 +92,12 @@ DBSynchronizer::~DBSynchronizer()
 
 bool DBSynchronizer::Synchronize(const WCHAR* path)
 {
-	GConsoleLogger->WriteStdOut(Color::RED, L"SyncStart\n");
 	ParseXmlDB(path);
-	GConsoleLogger->WriteStdOut(Color::RED, L"Parse\n");
 	GatherDBTables();
-	GConsoleLogger->WriteStdOut(Color::RED, L"GatherDBTable\n");
 	GatherDBIndexes();
-	GConsoleLogger->WriteStdOut(Color::RED, L"GatehrDBIndex\n");
 	GatherDBStoredProcedures();
-	GConsoleLogger->WriteStdOut(Color::RED, L"GatherDBProcedures\n");
 	CompareDBModel();
-	GConsoleLogger->WriteStdOut(Color::RED, L"CompareDBModel\n");
 	ExecuteUpdateQueries();
-	GConsoleLogger->WriteStdOut(Color::RED, L"Execute\n");
 	return true;
 }
 

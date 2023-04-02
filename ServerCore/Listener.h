@@ -3,7 +3,7 @@
 #include "NetAddress.h"
 
 class AcceptEvent;
-class ServerService;
+class ServerNetService;
 
 class Listener : public IocpObject
 {
@@ -13,7 +13,7 @@ public:
 
 public:
 	/* 외부에서 사용 */
-	bool StartAccept(ServerServiceRef service);
+	bool StartAccept(ServerNetServiceRef service);
 	void CloseSocket();
 
 public:
@@ -29,6 +29,6 @@ private:
 protected:
 	SOCKET _socket = INVALID_SOCKET;
 	Vector<AcceptEvent*> _acceptEvents;
-	ServerServiceRef _service;
+	ServerNetServiceRef _service;
 };
 

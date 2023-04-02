@@ -11,3 +11,10 @@ extern class DeadLockProfiler*		GDeadLockProfiler;
 extern class DBConnectionPool*		GDBConnectionPool;
 extern class ConsoleLog*			GConsoleLogger;
 
+class CoreGlobal
+{
+public:
+	CoreGlobal();
+	~CoreGlobal();
+	static void Instantiate();
+};

@@ -30,7 +30,50 @@ void Session::Send(SendBufferRef sendBuffer)
 	if(registerSend)
 		RegisterSend();
 }
+void Session::RegisterSend()
+{
+	if (IsConnected() == false)
+		return;
 
+	_sendEvent.Init();
+	_sendEvent.owner = shared_from_this();
+
+	{
+		WRITE_LOCK;
+		int32 writeSize = 0;
+		while (_sendQueue.empty() == false)
+		{
+			SendBufferRef sendBuffer = _sendQueue.front();
+			writeSize += sendBuffer->WriteSize();
+			//TODO : 예외체크
+			_sendQueue.pop();
+			_sendEvent.sendBuffers.push_back(sendBuffer);
+		}
+	}
+
+	Vector<WSABUF> wsaBufs;
+	wsaBufs.reserve(_sendEvent.sendBuffers.size());
+	for (SendBufferRef sendBuffer : _sendEvent.sendBuffers)
+	{
+		WSABUF wsaBuf;
+		wsaBuf.buf = reinterpret_cast<char*>(sendBuffer->Buffer());
+		wsaBuf.len = static_cast<LONG>(sendBuffer->WriteSize());
+		wsaBufs.push_back(wsaBuf);
+	}
+
+	DWORD numOfBytes = 0;
+	if (SOCKET_ERROR == WSASend(_socket, wsaBufs.data(), static_cast<DWORD>(wsaBufs.size()), &numOfBytes, 0, &_sendEvent, nullptr))
+	{
+		int32 errorCode = WSAGetLastError();
+		if (errorCode != WSA_IO_PENDING)
+		{
+			HandleError(errorCode);
+			_sendEvent.owner = nullptr;
+			_sendEvent.sendBuffers.clear();
+			_sendRegistered.store(false);
+		}
+	}
+}
 bool Session::Connect()
 {
 	return RegisterConnect();
@@ -144,50 +187,7 @@ void Session::RegisterRecv()
 	}
 }
 
-void Session::RegisterSend()
-{
-	if (IsConnected() == false)
-		return;
 
-	_sendEvent.Init();
-	_sendEvent.owner = shared_from_this();
-
-	{
-		WRITE_LOCK;
-		int32 writeSize = 0;
-		while (_sendQueue.empty() == false)
-		{
-			SendBufferRef sendBuffer = _sendQueue.front();
-			writeSize += sendBuffer->WriteSize();
-			//TODO : 예외체크
-			_sendQueue.pop();
-			_sendEvent.sendBuffers.push_back(sendBuffer);
-		}
-	}
-
-	Vector<WSABUF> wsaBufs; 
-	wsaBufs.reserve(_sendEvent.sendBuffers.size());
-	for (SendBufferRef sendBuffer : _sendEvent.sendBuffers)
-	{
-		WSABUF wsaBuf;
-		wsaBuf.buf = reinterpret_cast<char*>(sendBuffer->Buffer());
-		wsaBuf.len = static_cast<LONG>(sendBuffer->WriteSize());
-		wsaBufs.push_back(wsaBuf);
-	}
-
-	DWORD numOfBytes = 0;
-	if (SOCKET_ERROR == WSASend(_socket, wsaBufs.data(), static_cast<DWORD>(wsaBufs.size()), &numOfBytes, 0, &_sendEvent, nullptr))
-	{
-		int32 errorCode = WSAGetLastError();
-		if (errorCode != WSA_IO_PENDING)
-		{
-			HandleError(errorCode);
-			_sendEvent.owner = nullptr;
-			_sendEvent.sendBuffers.clear();
-			_sendRegistered.store(false);
-		}
-	}
-}
 
 void Session::ProcessConnect()
 {

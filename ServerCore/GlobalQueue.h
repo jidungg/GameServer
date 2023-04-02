@@ -1,8 +1,5 @@
 #pragma once
 
-/*----------------
-	GlobalQueue
------------------*/
 
 class GlobalQueue
 {

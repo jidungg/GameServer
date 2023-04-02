@@ -12,11 +12,11 @@ enum class ServiceType : uint8
 };
 
 using SessionFactory = function<SessionRef(void)>;
-class Service : public enable_shared_from_this<Service>
+class NetService : public enable_shared_from_this<NetService>
 {
 public : 
-	Service(ServiceType type, NetAddress address, IocpCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
-	virtual ~Service();
+	NetService(ServiceType type, NetAddress address, IocpCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
+	virtual ~NetService();
 
 	virtual bool Start() abstract;
 	bool CanStart() { return _sessionFactory != nullptr; }
@@ -50,20 +50,20 @@ protected:
 
 };
 
-class ClientService : public Service
+class ClientNetService : public NetService
 {
 public:
-	ClientService(NetAddress targetAddress, IocpCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
-	virtual ~ClientService() {}
+	ClientNetService(NetAddress targetAddress, IocpCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
+	virtual ~ClientNetService() {}
 
 	virtual bool Start() override;
 };
 
-class ServerService : public Service
+class ServerNetService : public NetService
 {
 public:
-	ServerService(NetAddress address, IocpCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
-	virtual ~ServerService(){}
+	ServerNetService(NetAddress address, IocpCoreRef core, SessionFactory factory, int32 maxSessionCount = 1);
+	virtual ~ServerNetService(){}
 
 	virtual bool Start() override;
 	virtual void CloseService()override;

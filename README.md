@@ -1,7 +1,5 @@
 # Description
-This procject is a server core program for MMORPG game. You can use this to make a server & client for something. It doesn't have to be a MMORPG game. 
-I made this repo by referring to the Inflearn lecture.
-[Inflearn lecture]https://www.inflearn.com/course/%EC%96%B8%EB%A6%AC%EC%96%BC-3d-mmorpg-4/dashboard
+This procject is a server core program for MMORPG game. But it doesn't have to be a MMORPG game.  You can use this to make a server & client for something. 
 Please refer to my blog for more information.
 [blog]https://ddukddaksudal.tistory.com/113
 
@@ -24,12 +22,18 @@ Intruduce how to build and run Example Projects(GameServer, DummyClient)
 
 # How to Use
 Introduce how to use ServerCore. There are several functions in ServerCore.
-1. DataBase
-2. Networking
-3. MultiThreading
-4. Job Queueing
+1. Pre-work
+2. DataBase
+3. Networking
+4. MultiThreading
+5. Job Queueing
 Make sure to include **CorePch.h** before you use its functions.
 
+## Pre-work
+1. Call **CoreGlobal::Instantiate()** to instantiate global instances such as GThreadManager, GMemory, GSendBufferManager, GGlobalQueue, GJobTimer, GDeadLockProfiler, GDBConnectionPool, GColsoleLogger. 
+	```c++
+	CoreGlobal::Instantiate();
+	```
 ## Using DB
 1. include **DBConnectionPool.h , DBBind.h, DBSynchronizer.h**.
 3. Make XML files describe DataBase. For example
@@ -74,7 +78,7 @@ Make sure to include **CorePch.h** before you use its functions.
 	```
 8.  Use **DBBind** to query to the DataBase. You can also use Procedure described in XML file. 
 	```c++
-	DBBind<3,0> dbBind(dbConn,  L"{CALL dbo.spGetGold(?)}");
+	DBBind<1,4> dbBind(dbConn,  L"{CALL dbo.spGetGold(?)}");
 	int32 id = 0;
 	int32 gold = 100;
 	WCHAR name[100];
@@ -93,7 +97,7 @@ Make sure to include **CorePch.h** before you use its functions.
 	
 ## Use Networking
 1. include **Service.h**.
-2. Create **ClientService** object on client program, **ServerService** object on server program. (Both classes are derived form **Service** class.)
+2. Create **ClientNetService** object on client program, **ServerNetService** object on server program. (Both classes are derived form **NetService** class.)
 ```c++
 //==========Server=============================
 	SOCKADDR_IN addr;
@@ -101,7 +105,7 @@ Make sure to include **CorePch.h** before you use its functions.
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port = htons(7777);
 
-	ServerServiceRef service = MakeShared<ServerService>(
+	ServerNetServiceRef service = MakeShared<ServerNetService>(
 		NetAddress(addr),
 		MakeShared<IocpCore>(),
 		MakeShared<GameSession>,
@@ -111,7 +115,7 @@ Make sure to include **CorePch.h** before you use its functions.
 	cout << "Input Server IP: ";
 	wcin >> ip;
 
-	ClientServiceRef service = MakeShared<ClientService>(
+	ClientNetServiceRef service = MakeShared<ClientNetService>(
 		NetAddress(ip,7777),
 		MakeShared<IocpCore>(),
 		MakeShared<ServerSession>,
@@ -167,7 +171,7 @@ private:
 ```
 4. Call **ThreadManager::DistributeReservedJobs()** and **ThreadManager::DoGlobalQueueWork()** in any thread that you want to process the jobs that in the job queue.
 ```c++
-void DoWorkerJob(ServerServiceRef& service)
+void DoWorkerJob(ServerNetServiceRef& service)
 {
 	while (true)
 	{

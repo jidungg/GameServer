@@ -2,15 +2,15 @@
 #include "Allocator.h"
 #include "Memory.h"
 
-void* BaseAllocator::Alloc(int32 size)
-{
-	return ::malloc(size);
-}
-
-void BaseAllocator::Release(void* ptr)
-{
-	::free(ptr);
-}
+//void* BaseAllocator::Alloc(int32 size)
+//{
+//	return ::malloc(size);
+//}
+//
+//void BaseAllocator::Release(void* ptr)
+//{
+//	::free(ptr);
+//}
 
 void* StompAllocator::Alloc(int32 size)
 {
@@ -21,6 +21,7 @@ void* StompAllocator::Alloc(int32 size)
 	//메모리 예약과 동시에 사용, 읽기쓰기 가능
 	void* baseAddress = VirtualAlloc(NULL, pageCount * PAGE_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	return static_cast<void*>(static_cast<int8*>(baseAddress) + dataOffset);
+
 }
 
 void StompAllocator::Release(void* ptr)

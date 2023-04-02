@@ -26,8 +26,8 @@ using IocpObjectRef = std::shared_ptr<class IocpObject>;
 using SessionRef = std::shared_ptr<class Session>;
 using PacketSessionRef = std::shared_ptr<class PacketSession>;
 using ListenerRef = std::shared_ptr<class Listener>;
-using ServerServiceRef = std::shared_ptr<class ServerService>;
-using ClientServiceRef = std::shared_ptr<class ClientService>;
+using ServerNetServiceRef = std::shared_ptr<class ServerNetService>;
+using ClientNetServiceRef = std::shared_ptr<class ClientNetService>;
 using SendBufferRef = std::shared_ptr<class SendBuffer>;
 using SendBufferChunkRef = std::shared_ptr<class SendBufferChunk>;
 using JobRef = std::shared_ptr<class Job>;
@@ -41,4 +41,4 @@ USING_SHARED_PTR(JobQueue)
 
 
 
-#define _STOMP
+//#define _STOMP

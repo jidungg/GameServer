@@ -48,6 +48,7 @@
     <ClCompile Include="Room.cpp">
       <Filter>DB\GameContents</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalInstances.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -80,6 +81,7 @@
     <ClInclude Include="GenProcedures.h">
       <Filter>DB</Filter>
     </ClInclude>
+    <ClInclude Include="GlobalInstances.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protobuf\bin\Enum.proto">

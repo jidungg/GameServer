@@ -16,5 +16,5 @@ private:
 	Set<GameSessionRef> _sessions;
 };
 
-extern GameSessionManager GSessionManager;
+
 
