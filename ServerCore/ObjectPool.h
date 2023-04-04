@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.h"
 #include "MemoryPool.h"
+#include "AllocateStrategy.h"
 
 template<typename Type>
 class ObjectPool
@@ -9,25 +10,17 @@ public:
 	template<typename... Args>
 	static Type* Pop(Args&&... args)
 	{
-#ifdef _STOMP
-		MemoryHeader* ptr = reinterpret_cast<MemoryHeader*>(StompAllocator::Alloc(s_allocSize));
-		Type* memory = static_cast<Type*>(MemoryHeader::AttachHeader(s_pool.Pop(), s_allocSize));
-#else
-		Type* memory = static_cast<Type*>(MemoryHeader::AttachHeader(s_pool.Pop(), s_allocSize));
-#endif // _STOMP
-
-		
+		MemoryHeader* header;
+		header = reinterpret_cast<MemoryHeader*>(s_allocStrategy->Allocate(s_allocSize));
+		Type* memory = static_cast<Type*>(MemoryHeader::AttachHeader(header, s_allocSize));
 		new(memory)Type(forward<Args>(args)...);
 		return memory;
 	}
 	static void Push(Type* obj)
 	{
 		obj->~Type();
-#ifdef _STOMP
-		StompAllocator::Release(MemoryHeader::DetachHeader(obj));
-#else
-		s_pool.Push(MemoryHeader::DetachHeader(obj));
-#endif // _STOMP
+
+		s_allocStrategy->Release(MemoryHeader::DetachHeader(obj));
 
 	}
 	template<typename... Args>
@@ -38,11 +31,16 @@ public:
 	}
 private:
 	static int32 s_allocSize;
-	static MemoryPool s_pool;
+	static AllocateStrategy* s_allocStrategy;
 };
 
 template<typename Type>
 int32 ObjectPool<Type>::s_allocSize = sizeof(Type) + sizeof(MemoryHeader);
 
+#ifdef _STOMP
 template<typename Type>
-MemoryPool ObjectPool<Type>::s_pool{ s_allocSize };
+AllocateStrategy* ObjectPool<Type>::allocStrategy = new class StompAllocate();
+#else
+template<typename Type>
+AllocateStrategy* ObjectPool<Type>::s_allocStrategy = new class ObjectPoolAllocate(s_allocSize);
+#endif // _STOMP

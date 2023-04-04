@@ -162,6 +162,9 @@
     <ClInclude Include="DBSynchronizer.h">
       <Filter>DB</Filter>
     </ClInclude>
+    <ClInclude Include="AllocateStrategy.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -268,6 +271,9 @@
     </ClCompile>
     <ClCompile Include="DBSynchronizer.cpp">
       <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="AllocateStrategy.cpp">
+      <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
