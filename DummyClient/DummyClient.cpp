@@ -6,6 +6,7 @@
 #include "ServerPacketHandler.h"
 #include <tchar.h>
 
+
 char sendData[] = "Hello World";
 
 class ServerSession : public PacketSession
@@ -52,15 +53,6 @@ int main()
 
 	this_thread::sleep_for(1s);
 
-	//char ip[INET_ADDRSTRLEN];
-	//cout << "Input Server IP: ";
-	//cin >> ip;
-
-	//SOCKADDR_IN addr;
-	//addr.sin_family = AF_INET;
-	//addr.sin_port = htons( 7777);
-	//inet_pton(AF_INET, ip, &(addr.sin_addr));
-	// 
 	wstring  ip;
 	cout << "Input Server IP: ";
 	wcin >> ip;

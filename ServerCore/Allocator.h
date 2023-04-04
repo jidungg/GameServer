@@ -1,26 +1,18 @@
 #pragma once
-//class BaseAllocator
-//{
-//public:
-//	static void* Alloc(int32 size);
-//	static void Release(void* ptr);
-//};
-
-class StompAllocator
-{
-	enum { PAGE_SIZE = 0x1000 };
-public:
-	static void* Alloc(int32 size);
-	static void Release(void* ptr);
-};
+class AllocateStrategy;
 
 
-class PoolAllocator
+class Allocator
 {
 public:
-	static void* Alloc(int32 size);
+	static void* Allocate(int32 size);
 	static void Release(void* ptr);
+
+	static void SetStrategy(AllocateStrategy* strategy) { s_allocStratagy = strategy; }
+private:
+	static AllocateStrategy* s_allocStratagy;
 };
+
 
 template<typename T>
 class STLAllocator
@@ -32,13 +24,21 @@ public:
 
 	template<typename Other>
 	STLAllocator(const STLAllocator<Other>&) {}
-	T* allocate(size_t count)
-	{
-		const int32 size = static_cast<int32>(count * sizeof(T));
-		return static_cast<T*>(PoolAllocator::Alloc(size));
-	}
-	void deallocate(T* ptr, size_t count)
-	{
-		PoolAllocator::Release(ptr);
-	}
+
+	T* allocate(size_t count);
+
+	void deallocate(T* ptr, size_t count) ;
 };
+
+template<typename T>
+T* STLAllocator<T>::allocate(size_t count)
+{
+	const int32 size = static_cast<int32>(count * sizeof(T));
+	return static_cast<T*>(Allocator::Allocate(size));
+}
+
+template<typename T>
+void STLAllocator<T>::deallocate(T* ptr, size_t count)
+{
+	Allocator::Release(ptr);
+}
